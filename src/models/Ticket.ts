@@ -42,7 +42,6 @@ class TicketModel extends BaseMongooseModel<TicketDocument> {
   }
 }
 
-const ticketModel = new TicketModel();
 
-export default ticketModel;
+export default TicketModel;
 

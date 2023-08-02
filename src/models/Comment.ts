@@ -34,7 +34,6 @@ class CommentModel extends BaseMongooseModel<CommentDocument> {
     }
   }
   
-  const commentModel = new CommentModel();
   
-export default commentModel;
+export default CommentModel;
   

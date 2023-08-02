@@ -6,8 +6,8 @@ import authRoutes from './routes/authRoutes';
 import { userActivityLogger } from './middleware/userActivityLogger';
 import { UserActivityLogService } from './services/UserActivityLogService';
 import UserActivityLogModel from './models/UserActivityLog';
-// import ticketRoutes from './routes/ticketRoutes';
-// import commentRoutes from './routes/commentRoutes';
+import ticketRoutes from './routes/ticketRoutes';
+import commentRoutes from './routes/commentRoutes';
 
 dotenv.config();
 
@@ -25,8 +25,8 @@ app.use(express.json());
 app.use(userActivityLogger(userActivityLogService))
 
 //Routes
-// app.use('/api/tickets', ticketRoutes);
-// app.use('/api/comments', commentRoutes);
+app.use('/api/tickets', ticketRoutes);
+app.use('/api/comments', commentRoutes);
 app.use('/api/auth', authRoutes);
 
 // Error handling middleware
