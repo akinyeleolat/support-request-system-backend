@@ -2,7 +2,10 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-// import userRoutes from './routes/userRoutes';
+import authRoutes from './routes/authRoutes';
+import { userActivityLogger } from './middleware/userActivityLogger';
+import { UserActivityLogService } from './services/UserActivityLogService';
+import UserActivityLogModel from './models/UserActivityLog';
 // import ticketRoutes from './routes/ticketRoutes';
 // import commentRoutes from './routes/commentRoutes';
 
@@ -11,14 +14,20 @@ dotenv.config();
 // Create Express app
 const app: Application = express();
 
+const userActivityLogModel = new UserActivityLogModel();
+
+const userActivityLogService = new UserActivityLogService(userActivityLogModel);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// // Routes
-// app.use('/api/users', userRoutes);
+app.use(userActivityLogger(userActivityLogService))
+
+//Routes
 // app.use('/api/tickets', ticketRoutes);
 // app.use('/api/comments', commentRoutes);
+app.use('/api/auth', authRoutes);
 
 // Error handling middleware
 app.use((err: any, req: Request, res: Response) => {

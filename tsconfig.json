@@ -6,9 +6,10 @@
       "rootDir": "./src",
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
+      "typeRoots": ["src/types"],
       "strict": true
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts","src/custom.d.ts"],
     "exclude": ["node_modules"]
   }
   
