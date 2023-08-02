@@ -21,7 +21,5 @@ class RoleModel extends BaseMongooseModel<RoleDocument> {
   }
 }
 
-const roleModel = new RoleModel();
-
-export default roleModel;
+export default RoleModel;
 

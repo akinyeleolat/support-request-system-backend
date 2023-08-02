@@ -36,7 +36,7 @@ class UserActivityLogModel extends BaseMongooseModel<UserActivityLogDocument> {
     }
   }
   
-  const userActivityLogModel = new UserActivityLogModel();
+ 
   
-  export default userActivityLogModel;
+  export default UserActivityLogModel;
   

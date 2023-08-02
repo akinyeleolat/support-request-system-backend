@@ -4,9 +4,13 @@ import { BaseMongooseModel } from './BaseModel';
 
 export interface UserDocument extends Document {
   username: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role: string;
+  resetToken?: string | null; // Make resetToken optional and accept null
+  resetTokenExpiration?: Date | null; // Make resetTokenExpiration optional and accept null
 }
 
 const userSchema = new Schema({
@@ -37,6 +41,14 @@ const userSchema = new Schema({
     ref: 'Role',
     required: true,
   },
+  resetToken: {
+    type: String,
+    default: null, // Set default as null to make it optional and accept null
+  },
+  resetTokenExpiration: {
+    type: Date,
+    default: null, // Set default as null to make it optional and accept null
+  },
 });
 
 class UserModel extends BaseMongooseModel<UserDocument> {
@@ -45,6 +57,4 @@ class UserModel extends BaseMongooseModel<UserDocument> {
   }
 }
 
-const userModel = new UserModel();
-
-export default userModel;
+export default UserModel;
