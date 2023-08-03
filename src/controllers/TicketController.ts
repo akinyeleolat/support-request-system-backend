@@ -1,12 +1,15 @@
 // src/controllers/TicketController.ts
 import { Request, Response, NextFunction } from 'express';
 import { TicketService } from '../services/TicketService';
+import { CommentService } from '../services/CommentService';
 
 export class TicketController {
   private ticketService: TicketService;
+  private commentService: CommentService;
 
-  constructor(ticketService: TicketService) {
+  constructor(ticketService: TicketService, commentService: CommentService) {
     this.ticketService = ticketService;
+    this.commentService = commentService;
   }
 
   async createTicket(req: Request, res: Response, next: NextFunction) {
@@ -79,6 +82,20 @@ export class TicketController {
     try {
       const tickets = await this.ticketService.findAll();
       res.json(tickets);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getCommentsForTicket(req: Request, res: Response, next: NextFunction) {
+    try {
+      const ticketId = req.params.id;
+
+      // Retrieve the comments for the specific ticket
+      const comments = await this.commentService.getCommentsForTicket(ticketId);
+
+      // Return the comments in the response
+      res.json(comments);
     } catch (error) {
       next(error);
     }
