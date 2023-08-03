@@ -12,7 +12,7 @@ import {
   forgotPasswordValidation,
   resetPasswordValidation,
 } from '../middleware/authValidationMiddleware';
-import { authTokenValidator } from '../middleware/authTokenValidatorMiddleware';
+import { authTokenValidator } from '../middleware/authMiddleware';
 
 const router = Router();
 

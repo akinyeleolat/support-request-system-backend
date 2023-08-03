@@ -4,6 +4,7 @@ import { BaseMongooseModel } from './BaseModel';
 
 export interface RoleDocument extends Document {
   name: string;
+  description: string;
 }
 
 const roleSchema = new Schema({
@@ -11,6 +12,9 @@ const roleSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  description: {
+    type: String,
   },
 });
 

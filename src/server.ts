@@ -8,6 +8,7 @@ import { UserActivityLogService } from './services/UserActivityLogService';
 import UserActivityLogModel from './models/UserActivityLog';
 import ticketRoutes from './routes/ticketRoutes';
 import commentRoutes from './routes/commentRoutes';
+import { seedRoles } from './seeds/roleSeeder';
 
 dotenv.config();
 
@@ -47,6 +48,8 @@ async function connectToDatabase() {
     await mongoose.connect(mongoURI, {});
 
     console.log('Connected to MongoDB successfully');
+
+    seedRoles()
 
     // Start the server
     const port = process.env.PORT || 3000;
