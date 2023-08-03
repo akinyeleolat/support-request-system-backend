@@ -1,4 +1,7 @@
 // src/services/TicketService.ts
+import fs from 'fs';
+import { join } from 'path';
+import * as csv from 'fast-csv';
 import TicketModel, { TicketDocument } from '../models/Ticket';
 
 export class TicketService {
@@ -32,5 +35,24 @@ export class TicketService {
     return this.ticketModel.findAll(filter);
   }
 
-  // Add more methods as needed for your use case
+  async findClosedTicketsInRange(startDate: Date, endDate: Date): Promise<TicketDocument[]> {
+    return this.ticketModel.findAll({
+      status: 'Closed',
+      updatedAt: { $gte: startDate, $lte: endDate },
+    });
+  }
+
+  async generateClosedTicketsReport(startDate: Date, endDate: Date): Promise<string> {
+    const closedTickets = await this.findClosedTicketsInRange(startDate, endDate);
+
+    const fileName = `closed_tickets_report_${Date.now()}.csv`;
+    const filePath = join(__dirname, '..', 'reports', fileName);
+
+    const ws = fs.createWriteStream(filePath);
+    csv.write(closedTickets, { headers: true }).pipe(ws);
+
+    return filePath;
+  }
 }
+
+

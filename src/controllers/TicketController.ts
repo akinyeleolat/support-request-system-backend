@@ -1,5 +1,6 @@
 // src/controllers/TicketController.ts
 import { Request, Response, NextFunction } from 'express';
+import fs from 'fs';
 import { TicketService } from '../services/TicketService';
 import { CommentService } from '../services/CommentService';
 
@@ -101,5 +102,39 @@ export class TicketController {
     }
   }
 
-  // Add more methods as needed for your use case
+
+  async generateClosedTicketsReport(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { startDate, endDate } = req.query;
+
+      if (!startDate || !endDate) {
+        return res.status(400).json({ message: 'Start date and end date are required.' });
+      }
+
+      const startDateObj = new Date(startDate as string);
+      const endDateObj = new Date(endDate as string);
+
+      if (isNaN(startDateObj.getTime()) || isNaN(endDateObj.getTime())) {
+        return res.status(400).json({ message: 'Invalid date format. Please provide dates in valid format (YYYY-MM-DD).' });
+      }
+
+      const reportFilePath = await this.ticketService.generateClosedTicketsReport(startDateObj, endDateObj);
+
+      res.download(reportFilePath, (err) => {
+        if (err) {
+          console.error('Error downloading file:', err);
+          return res.status(500).json({ message: 'Error downloading file.' });
+        }
+
+        // Delete the report file after it's downloaded
+        fs.unlink(reportFilePath, (err: any) => {
+          if (err) {
+            console.error('Error deleting file:', err);
+          }
+        });
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
