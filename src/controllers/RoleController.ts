@@ -11,6 +11,32 @@ export class RoleController {
     this.roleService = roleService;
   }
 
+  /**
+   * @swagger
+   * /api/roles:
+   *   post:
+   *     summary: Create a new role
+   *     description: Create a new role with the provided name and description
+   *     tags:
+   *       - Roles
+   *     parameters:
+   *       - in: body
+   *         name: role
+   *         description: The role information to create
+   *         required: true
+   *         schema:
+   *           type: object
+   *           properties:
+   *             name:
+   *               type: string
+   *             description:
+   *               type: string
+   *     responses:
+   *       201:
+   *         description: Successfully created a new role
+   *       500:
+   *         description: Internal server error
+   */
   async createRole(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, description } = req.body;
@@ -23,6 +49,20 @@ export class RoleController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/roles:
+   *   get:
+   *     summary: Get all roles
+   *     description: Get a list of all roles
+   *     tags:
+   *       - Roles
+   *     responses:
+   *       200:
+   *         description: Successfully fetched roles
+   *       500:
+   *         description: Internal server error
+   */
   async getRoles(req: Request, res: Response, next: NextFunction) {
     try {
       const roles = await this.roleService.getAllRoles();
@@ -32,6 +72,28 @@ export class RoleController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/roles/{id}:
+   *   get:
+   *     summary: Get a role by ID
+   *     description: Get a role by its ID
+   *     tags:
+   *       - Roles
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: The ID of the role to retrieve
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Successfully fetched the role
+   *       404:
+   *         description: Role not found
+   *       500:
+   *         description: Internal server error
+   */
   async getRole(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -47,6 +109,39 @@ export class RoleController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/roles/{id}:
+   *   put:
+   *     summary: Update a role
+   *     description: Update an existing role with the provided name and description
+   *     tags:
+   *       - Roles
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: The ID of the role to update
+   *         required: true
+   *         type: string
+   *       - in: body
+   *         name: role
+   *         description: The updated role information
+   *         required: true
+   *         schema:
+   *           type: object
+   *           properties:
+   *             name:
+   *               type: string
+   *             description:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Successfully updated the role
+   *       404:
+   *         description: Role not found
+   *       500:
+   *         description: Internal server error
+   */
   async updateRole(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -63,6 +158,28 @@ export class RoleController {
     }
   }
 
+   /**
+   * @swagger
+   * /api/roles/{id}:
+   *   delete:
+   *     summary: Delete a role
+   *     description: Delete a role by its ID
+   *     tags:
+   *       - Roles
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: The ID of the role to delete
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Successfully deleted the role
+   *       404:
+   *         description: Role not found
+   *       500:
+   *         description: Internal server error
+   */
   async deleteRole(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;

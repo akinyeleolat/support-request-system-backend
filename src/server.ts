@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import http from 'http'; // Import http module for server
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import authRoutes from './routes/authRoutes';
 import { userActivityLogger } from './middleware/userActivityLogger';
 import { UserActivityLogService } from './services/UserActivityLogService';
@@ -11,6 +13,7 @@ import ticketRoutes from './routes/ticketRoutes';
 import commentRoutes from './routes/commentRoutes';
 import roleRoutes from './routes/roleRoutes';
 import { seedRoles } from './seeds/roleSeeder';
+import { swaggerOptions } from './config';
 
 dotenv.config();
 
@@ -24,6 +27,12 @@ const userActivityLogService = new UserActivityLogService(userActivityLogModel);
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Generate Swagger JSON
+const specs = swaggerJsdoc(swaggerOptions);
+
+// Serve Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(userActivityLogger(userActivityLogService))
 

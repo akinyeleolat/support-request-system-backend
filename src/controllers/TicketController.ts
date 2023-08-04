@@ -13,6 +13,34 @@ export class TicketController {
     this.commentService = commentService;
   }
 
+  /**
+   * @swagger
+   * /api/tickets:
+   *   post:
+   *     summary: Create a new ticket
+   *     description: Create a new ticket with the provided title, description, and customer ID
+   *     tags:
+   *       - Tickets
+   *     parameters:
+   *       - in: body
+   *         name: ticket
+   *         description: The ticket information to create
+   *         required: true
+   *         schema:
+   *           type: object
+   *           properties:
+   *             title:
+   *               type: string
+   *             description:
+   *               type: string
+   *             customer:
+   *               type: string
+   *     responses:
+   *       201:
+   *         description: Successfully created a new ticket
+   *       500:
+   *         description: Internal server error
+   */
   async createTicket(req: Request, res: Response, next: NextFunction) {
     try {
       const { title, description, customer } = req.body;
@@ -29,6 +57,39 @@ export class TicketController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/tickets/{id}:
+   *   put:
+   *     summary: Update a ticket
+   *     description: Update an existing ticket with the provided title and description
+   *     tags:
+   *       - Tickets
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: The ID of the ticket to update
+   *         required: true
+   *         type: string
+   *       - in: body
+   *         name: ticket
+   *         description: The updated ticket information
+   *         required: true
+   *         schema:
+   *           type: object
+   *           properties:
+   *             title:
+   *               type: string
+   *             description:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Successfully updated the ticket
+   *       404:
+   *         description: Ticket not found
+   *       500:
+   *         description: Internal server error
+   */
   async updateTicket(req: Request, res: Response, next: NextFunction) {
     try {
       const ticketId = req.params.id;
@@ -49,6 +110,28 @@ export class TicketController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/tickets/{id}:
+   *   delete:
+   *     summary: Delete a ticket
+   *     description: Delete a ticket by its ID
+   *     tags:
+   *       - Tickets
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: The ID of the ticket to delete
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Successfully deleted the ticket
+   *       404:
+   *         description: Ticket not found
+   *       500:
+   *         description: Internal server error
+   */
   async deleteTicket(req: Request, res: Response, next: NextFunction) {
     try {
       const ticketId = req.params.id;
@@ -64,6 +147,28 @@ export class TicketController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/tickets/{id}:
+   *   get:
+   *     summary: Get a ticket by ID
+   *     description: Get a ticket by its ID
+   *     tags:
+   *       - Tickets
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: The ID of the ticket to retrieve
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Successfully fetched the ticket
+   *       404:
+   *         description: Ticket not found
+   *       500:
+   *         description: Internal server error
+   */
   async getTicket(req: Request, res: Response, next: NextFunction) {
     try {
       const ticketId = req.params.id;
@@ -79,6 +184,20 @@ export class TicketController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/tickets:
+   *   get:
+   *     summary: Get all tickets
+   *     description: Get a list of all tickets
+   *     tags:
+   *       - Tickets
+   *     responses:
+   *       200:
+   *         description: Successfully fetched tickets
+   *       500:
+   *         description: Internal server error
+   */
   async getTickets(req: Request, res: Response, next: NextFunction) {
     try {
       const tickets = await this.ticketService.findAll();
@@ -88,6 +207,28 @@ export class TicketController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/tickets/comment/{id}:
+   *   get:
+   *     summary: Get comments for a ticket
+   *     description: Get all comments associated with a specific ticket
+   *     tags:
+   *       - Tickets
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: The ID of the ticket to retrieve comments for
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Successfully fetched comments for the ticket
+   *       404:
+   *         description: Ticket not found
+   *       500:
+   *         description: Internal server error
+   */
   async getCommentsForTicket(req: Request, res: Response, next: NextFunction) {
     try {
       const ticketId = req.params.id;
@@ -103,6 +244,36 @@ export class TicketController {
   }
 
 
+  /**
+ * @swagger
+ * /api/tickets/reports/closed:
+ *   get:
+ *     summary: Generate a report of closed tickets within a date range
+ *     description: Generate a CSV report containing closed tickets within the specified start and end date
+ *     tags:
+ *       - Tickets
+ *     parameters:
+ *       - name: startDate
+ *         in: query
+ *         description: The start date for the report (format: YYYY-MM-DD)
+ *         required: true
+ *         schema:
+ *           type: string
+ * 
+ *       - name: endDate
+ *         in: query
+ *         description: The end date for the report (format: YYYY-MM-DD)
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully generated the report
+ *       400:
+ *         description: Invalid date format or missing start/end date
+ *       500:
+ *         description: Internal server error
+ */
   async generateClosedTicketsReport(req: Request, res: Response, next: NextFunction) {
     try {
       const { startDate, endDate } = req.query;
