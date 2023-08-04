@@ -1,10 +1,10 @@
+import mocha from 'mocha';
 import { expect } from 'chai';
 import request from 'supertest';
 import express, { Application } from 'express';
-import { AuthController } from '../../src/controllers/AuthController';
-import { AuthService } from '../../src/services/AuthService';
+import { AuthController } from '../../controllers/AuthController';
+import { AuthService } from '../../services/AuthService';
 
-// Import other dependencies and mock services as needed
 
 describe('AuthController', () => {
   let app: Application;
@@ -112,3 +112,4 @@ describe('AuthController', () => {
     // Add more test cases for error scenarios if needed
   });
 });
+

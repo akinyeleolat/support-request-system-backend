@@ -1,6 +1,7 @@
+import mocha from 'mocha';
 import { expect } from 'chai';
 import request from 'supertest';
-import { app, connectToDatabase, closeServer } from '../src/server';
+import { app, connectToDatabase, closeServer } from '../server';
 
 describe('App', () => {
   beforeEach(async () => {
