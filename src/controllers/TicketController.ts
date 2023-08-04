@@ -255,14 +255,14 @@ export class TicketController {
  *     parameters:
  *       - name: startDate
  *         in: query
- *         description: The start date for the report (format: YYYY-MM-DD)
+ *         description:The start date for the report (format: YYYY-MM-DD)
  *         required: true
  *         schema:
  *           type: string
  * 
  *       - name: endDate
  *         in: query
- *         description: The end date for the report (format: YYYY-MM-DD)
+ *         description:The end date for the report (format: YYYY-MM-DD)
  *         required: true
  *         schema:
  *           type: string
