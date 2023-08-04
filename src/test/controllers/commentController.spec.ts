@@ -1,4 +1,5 @@
 import request from 'supertest';
+import sinon from 'sinon';
 import { expect } from 'chai';
 import express from 'express';
 import { CommentController } from '../../controllers/CommentController';
@@ -25,12 +26,28 @@ describe('CommentController', () => {
 
   describe('createComment', () => {
     it('should create a new comment and return 201', async () => {
-      commentService.create = async () => ({ text: 'New Comment' });
-
-      const res = await request(app).post('/api/comments').send({});
-
+      const newCommentData = { text: 'New Comment', ticket: 'ticketId', user: 'userId' };
+      const createdComment = { ...newCommentData, _id: 'newCommentId' };
+  
+      // Mock the CommentService create method
+      commentService.create = sinon.stub().resolves(createdComment);
+  
+      const res = await request(app).post('/api/comments').send(newCommentData);
+  
       expect(res.status).to.equal(201);
-      expect(res.body).to.deep.equal({ text: 'New Comment' });
+      expect(res.body).to.deep.equal(createdComment);
+      sinon.assert.calledOnce(commentService.create);
+      sinon.assert.calledWithExactly(commentService.create, newCommentData);
+    });
+
+    it('should not create a new comment and return 500, when ticketId is invalid', async () => {
+      const newCommentData = { text: 'New Comment', ticket: 'ticketId', user: 'userId' };
+      commentService.create = async () => newCommentData;
+
+      const res = await request(app).post('/api/comments').send(newCommentData);
+
+      expect(res.status).to.equal(500);
+      expect(res.body).to.have.property('error', 'Failed to create comment.');
     });
 
     it('should handle errors during comment creation and return 500', async () => {
@@ -46,13 +63,30 @@ describe('CommentController', () => {
   });
 
   describe('updateComment', () => {
+
     it('should update an existing comment and return 200', async () => {
-      commentService.update = async () => ({ text: 'Updated Comment' });
-
-      const res = await request(app).put('/api/comments/commentId').send({ text: 'Updated Comment' });
-
+      const existingCommentId = 'commentId';
+      const updatedCommentData = { text: 'Updated Comment' };
+  
+      // Mock the CommentService update method
+      commentService.update = sinon.stub().resolves({ ...updatedCommentData, _id: existingCommentId });
+  
+      const res = await request(app).put(`/api/comments/${existingCommentId}`).send(updatedCommentData);
+  
       expect(res.status).to.equal(200);
-      expect(res.body).to.deep.equal({ text: 'Updated Comment' });
+      expect(res.body).to.deep.equal({ ...updatedCommentData, _id: existingCommentId });
+      sinon.assert.calledOnce(commentService.update);
+      sinon.assert.calledWithExactly(commentService.update, existingCommentId, updatedCommentData);
+    });
+
+    it('should not update an existing comment and return 500, when ticketId is invalid', async () => {
+      const updatedCommentData = { text: 'Updated Comment' };
+      commentService.update = async () => updatedCommentData;
+
+      const res = await request(app).put('/api/comments/commentId').send(updatedCommentData);
+
+      expect(res.status).to.equal(500);
+      expect(res.body).to.have.property('error', 'Failed to update comment.');
     });
 
     it('should handle updating a non-existing comment and return 500', async () => {

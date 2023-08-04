@@ -1,4 +1,4 @@
-import mocha from 'mocha';
+import 'mocha';
 import { expect } from 'chai';
 import request from 'supertest';
 import express, { Application } from 'express';
