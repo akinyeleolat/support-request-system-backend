@@ -1,8 +1,6 @@
 // src/controllers/AuthController.ts
 import { Request, Response } from 'express';
-import userModel from '../models/User';
 import { AuthService } from '../services/AuthService';
-import { UserService } from '../services/UserService';
 
 export class AuthController {
   private authService: AuthService;
@@ -11,6 +9,42 @@ export class AuthController {
     this.authService = authService;
   }
 
+  /**
+   * @swagger
+   * /api/auth/signup:
+   *   post:
+   *     summary: Sign up a new user
+   *     description: Register a new user with the provided information
+   *     tags:
+   *       - Authentication
+   *     parameters:
+   *       - in: body
+   *         name: user
+   *         description: The user information to sign up
+   *         required: true
+   *         schema:
+   *           type: object
+   *           properties:
+   *             username:
+   *               type: string
+   *             lastName:
+   *               type: string
+   *             firstName:
+   *               type: string
+   *             email:
+   *               type: string
+   *             password:
+   *               type: string
+   *             role:
+   *               type: string
+   *     responses:
+   *       201:
+   *         description: Successfully signed up a new user
+   *       400:
+   *         description: Bad request, missing required fields or invalid data
+   *       500:
+   *         description: Internal server error
+   */
   signUp = async (req: Request, res: Response)=> {
     try {
       const { username,lastName, firstName, email, password, role } = req.body;
@@ -29,6 +63,34 @@ export class AuthController {
   }
 
 
+  /**
+   * @swagger
+   * /api/auth/login:
+   *   post:
+   *     summary: User login
+   *     description: Authenticate user with provided credentials
+   *     tags:
+   *       - Authentication
+   *     parameters:
+   *       - in: body
+   *         name: credentials
+   *         description: The user credentials for login
+   *         required: true
+   *         schema:
+   *           type: object
+   *           properties:
+   *             username:
+   *               type: string
+   *             password:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Successfully logged in, returns authentication tokens
+   *       401:
+   *         description: Unauthorized, invalid credentials
+   *       500:
+   *         description: Internal server error
+   */
   login = async (req: Request, res: Response)=>{
     try {
       const { username, password } = req.body;
@@ -46,6 +108,32 @@ export class AuthController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/auth/forgot-password:
+   *   post:
+   *     summary: Request password reset
+   *     description: Send a password reset link to the provided email address
+   *     tags:
+   *       - Authentication
+   *     parameters:
+   *       - in: body
+   *         name: email
+   *         description: The email address for password reset
+   *         required: true
+   *         schema:
+   *           type: object
+   *           properties:
+   *             email:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Password reset link sent successfully
+   *       404:
+   *         description: Email address not found
+   *       500:
+   *         description: Internal server error
+   */
   forgotPassword = async(req: Request, res: Response)=> {
     try {
       const { email } = req.body;
@@ -61,6 +149,34 @@ export class AuthController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/auth/reset-password:
+   *   post:
+   *     summary: Reset user password
+   *     description: Reset the user password with the provided new password
+   *     tags:
+   *       - Authentication
+   *     parameters:
+   *       - in: body
+   *         name: credentials
+   *         description: The user ID and new password for password reset
+   *         required: true
+   *         schema:
+   *           type: object
+   *           properties:
+   *             userId:
+   *               type: string
+   *             password:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Password reset successful
+   *       404:
+   *         description: User not found
+   *       500:
+   *         description: Internal server error
+   */
   resetPassword= async (req: Request, res: Response)=> {
     try {
       const { userId, password } = req.body;

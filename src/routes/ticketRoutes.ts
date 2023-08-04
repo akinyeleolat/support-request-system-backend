@@ -24,6 +24,7 @@ router.get('/tickets/comment/:id', ticketController.getCommentsForTicket.bind(ti
 router.get('/tickets', ticketController.getTickets.bind(ticketController));
 
 router.use(validateIsAdmin);
+router.get('/tickets/closed', ticketController.generateClosedTicketsReport.bind(ticketController));
 router.delete('/tickets/:id', ticketController.deleteTicket.bind(ticketController));
 
 export default router;
