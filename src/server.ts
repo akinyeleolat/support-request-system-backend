@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -34,16 +34,16 @@ const specs = swaggerJsdoc(swaggerOptions);
 // Serve Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-app.use(userActivityLogger(userActivityLogService))
+// app.use(userActivityLogger(userActivityLogService))
 
 //Routes
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/comments', commentRoutes);
-app.use('/api/role', roleRoutes)
+app.use('/api/roles', roleRoutes)
 app.use('/api/auth', authRoutes);
 
 // Error handling middleware
-app.use((err: any, req: Request, res: Response) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
 });

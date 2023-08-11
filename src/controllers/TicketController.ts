@@ -60,7 +60,7 @@ export class TicketController {
   /**
    * @swagger
    * /api/tickets/{id}:
-   *   put:
+   *   patch:
    *     summary: Update a ticket
    *     description: Update an existing ticket with the provided title and description
    *     tags:
@@ -93,10 +93,11 @@ export class TicketController {
   async updateTicket(req: Request, res: Response, next: NextFunction) {
     try {
       const ticketId = req.params.id;
-      const { title, description } = req.body;
+      const { title, description, ...data } = req.body;
       const ticketData = {
         title,
         description,
+        ...data
       };
 
       const updatedTicket = await this.ticketService.update(ticketId, ticketData);
@@ -209,7 +210,7 @@ export class TicketController {
 
   /**
    * @swagger
-   * /api/tickets/comment/{id}:
+   * /api/tickets/{id}/comment:
    *   get:
    *     summary: Get comments for a ticket
    *     description: Get all comments associated with a specific ticket
@@ -297,13 +298,61 @@ export class TicketController {
           return res.status(500).json({ message: 'Error downloading file.' });
         }
 
-        // Delete the report file after it's downloaded
-        fs.unlink(reportFilePath, (err: any) => {
-          if (err) {
-            console.error('Error deleting file:', err);
-          }
-        });
+        // // Delete the report file after it's downloaded
+        // fs.unlink(reportFilePath, (err: any) => {
+        //   if (err) {
+        //     console.error('Error deleting file:', err);
+        //   }
+        // });
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+
+  /**
+   * @swagger
+   * /api/tickets/{id}/assign:
+   *   post:
+   *     summary: Assign tickets to support agent
+   *     description: Assign an existing ticket with the provided title and description
+   *     tags:
+   *       - Tickets
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: The ID of the ticket to assign
+   *         required: true
+   *         type: string
+   *       - in: body
+   *         name: ticket
+   *         description: The assigned ticket information
+   *         required: true
+   *         schema:
+   *           type: object
+   *           properties:
+   *             supportAgent:
+   *               type: string
+   *     responses:
+   *       200:
+   *         description: Successfully assigned the ticket
+   *       404:
+   *         description: Ticket or support agent not found
+   *       500:
+   *         description: Internal server error
+   */
+  async assignTicket(req: Request, res: Response, next: NextFunction) {
+    try {
+      const ticketId = req.params.id;
+      const { supportAgent } = req.body;
+
+      const assignedTicket = await this.ticketService.assignTicketToSupportAgent(ticketId, supportAgent);
+      if (!assignedTicket) {
+        return res.status(404).json({ message: 'Assigned Ticket not found' });
+      }
+
+      res.status(200).json(assignedTicket);
     } catch (error) {
       next(error);
     }

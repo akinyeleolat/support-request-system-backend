@@ -11,8 +11,10 @@ import {
   loginValidation,
   forgotPasswordValidation,
   resetPasswordValidation,
+  handleValidationAndExecution
 } from '../middleware/authValidationMiddleware';
 import { authTokenValidator } from '../middleware/authMiddleware';
+import { validationResult } from 'express-validator';
 
 const router = Router();
 
@@ -23,10 +25,10 @@ const roleService = new RoleService(roleModel);
 const authService = new AuthService(userService, roleService);
 const authController = new AuthController(authService);
 
-router.post('/signup', signUpValidation, authController.signUp.bind(authController));
-router.post('/login', loginValidation, authController.login.bind(authController));
-router.post('/forgot-password', forgotPasswordValidation, authController.forgotPassword.bind(authController));
-router.post('/reset-password', resetPasswordValidation, authController.resetPassword.bind(authController));
+router.post('/signup', signUpValidation, handleValidationAndExecution(signUpValidation, authController.signUp.bind(authController)));
+router.post('/login', loginValidation,  handleValidationAndExecution(loginValidation, authController.login.bind(authController)));
+router.post('/forgot-password', forgotPasswordValidation, handleValidationAndExecution(forgotPasswordValidation, authController.forgotPassword.bind(authController)));
+router.post('/reset-password', resetPasswordValidation,handleValidationAndExecution(resetPasswordValidation, authController.resetPassword.bind(authController)));
 
 // Test authTokenValidator middleware to routes that require authentication
 router.get('/protected-route', authTokenValidator, (req, res) => {

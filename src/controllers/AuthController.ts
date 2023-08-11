@@ -51,6 +51,7 @@ export class AuthController {
 
       const signUpResult = await this.authService.signUp(username,lastName, firstName,  email, password, role);
       if (signUpResult.error) {
+        console.log(signUpResult.error);
         return res.status(signUpResult.statusCode).json({ message: signUpResult.message });
       }
 
@@ -58,6 +59,7 @@ export class AuthController {
 
       res.status(201).json({ authToken, refreshToken, user });
     } catch (error) {
+      console.log(error)
       res.status(500).json({ message: 'Internal server error.' });
     }
   }

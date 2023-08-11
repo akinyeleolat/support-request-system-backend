@@ -1,5 +1,7 @@
 // src/services/RoleService.ts
+import { StatusCodes } from 'http-status-codes';
 import RoleModel, { RoleDocument } from '../models/Role';
+import { CustomError, generateError } from '../util/errorUtils';
 
 export class RoleService {
   private roleModel: RoleModel; // Use the actual type for the RoleModel
@@ -47,13 +49,15 @@ export class RoleService {
     return !existingRole;
   }
 
-  async createRoleWithValidation(name: string, description: string): Promise<RoleDocument> {
+  async createRoleWithValidation(name: string, description: string) {
     if (!name || !description) {
-      throw new Error('Missing role name or description.');
+      const errorResponse: CustomError = generateError(StatusCodes.BAD_REQUEST,'Missing role name or description.' );
+      return errorResponse;
     }
 
     if (!(await this.isRoleNameUnique(name))) {
-      throw new Error('Role with the same name already exists.');
+      const errorResponse: CustomError = generateError(StatusCodes.CONFLICT,'Role with the same name already exists.' );
+      return errorResponse;
     }
 
     return this.roleModel.create({ name, description });

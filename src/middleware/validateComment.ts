@@ -8,14 +8,14 @@ interface CommentData {
 }
 
 function validateComment(req: Request, res: Response, next: NextFunction) {
-  const { text, ticket, user } = req.body;
+  const { text, ticketId, user } = req.body;
   const errors: string[] = [];
 
   if (!text || typeof text !== 'string') {
     errors.push('Text is required and must be a string.');
   }
 
-  if (!ticket || typeof ticket !== 'string') {
+  if (!ticketId || typeof ticketId !== 'string') {
     errors.push('Ticket ID is required and must be a string.');
   }
 

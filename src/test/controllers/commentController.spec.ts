@@ -19,7 +19,7 @@ describe('CommentController', () => {
     const commentController = new CommentController(commentService);
 
     app.post('/api/comments', commentController.createComment.bind(commentController));
-    app.put('/api/comments/:id', commentController.updateComment.bind(commentController));
+    app.patch('/api/comments/:id', commentController.updateComment.bind(commentController));
     app.delete('/api/comments/:id', commentController.deleteComment.bind(commentController));
     app.get('/api/comments', commentController.getAllComments.bind(commentController));
   });
@@ -71,7 +71,7 @@ describe('CommentController', () => {
       // Mock the CommentService update method
       commentService.update = sinon.stub().resolves({ ...updatedCommentData, _id: existingCommentId });
   
-      const res = await request(app).put(`/api/comments/${existingCommentId}`).send(updatedCommentData);
+      const res = await request(app).patch(`/api/comments/${existingCommentId}`).send(updatedCommentData);
   
       expect(res.status).to.equal(200);
       expect(res.body).to.deep.equal({ ...updatedCommentData, _id: existingCommentId });
@@ -83,7 +83,7 @@ describe('CommentController', () => {
       const updatedCommentData = { text: 'Updated Comment' };
       commentService.update = async () => updatedCommentData;
 
-      const res = await request(app).put('/api/comments/commentId').send(updatedCommentData);
+      const res = await request(app).patch('/api/comments/commentId').send(updatedCommentData);
 
       expect(res.status).to.equal(500);
       expect(res.body).to.have.property('error', 'Failed to update comment.');
@@ -92,7 +92,7 @@ describe('CommentController', () => {
     it('should handle updating a non-existing comment and return 500', async () => {
       commentService.update = async () => null;
 
-      const res = await request(app).put('/api/comments/nonExistentId').send({ text: 'Updated Comment' });
+      const res = await request(app).patch('/api/comments/nonExistentId').send({ text: 'Updated Comment' });
 
       expect(res.status).to.equal(500);
       expect(res.body).to.have.property('error', 'Failed to update comment.');
@@ -103,7 +103,7 @@ describe('CommentController', () => {
         throw new Error('Failed to update comment');
       };
 
-      const res = await request(app).put('/api/comments/commentId').send({});
+      const res = await request(app).patch('/api/comments/commentId').send({});
 
       expect(res.status).to.equal(500);
       expect(res.body).to.have.property('error', 'Failed to update comment.');

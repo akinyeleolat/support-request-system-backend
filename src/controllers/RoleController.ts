@@ -41,7 +41,7 @@ export class RoleController {
     try {
       const { name, description } = req.body;
 
-      const newRole: RoleDocument = await this.roleService.createRoleWithValidation(name, description);
+      const newRole = await this.roleService.createRoleWithValidation(name, description);
 
       return res.status(201).json(newRole);
     } catch (error) {
@@ -112,7 +112,7 @@ export class RoleController {
   /**
    * @swagger
    * /api/roles/{id}:
-   *   put:
+   *   patch:
    *     summary: Update a role
    *     description: Update an existing role with the provided name and description
    *     tags:
