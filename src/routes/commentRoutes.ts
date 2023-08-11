@@ -6,6 +6,7 @@ import { CommentController } from '../controllers/CommentController';
 import validateComment from '../middleware/validateComment';
 import { authTokenValidator, validateIsAdmin } from '../middleware/authMiddleware';
 import TicketModel from '../models/Ticket';
+import { userActivityLogger, userActivityLogService } from '../middleware/userActivityLogger';
 
 const router = Router();
 const commentModel = new CommentModel();
@@ -14,12 +15,14 @@ const commentService = new CommentService(commentModel, ticketModel);
 const commentController = new CommentController(commentService);
 
 router.use(authTokenValidator)
-router.post('/comments', validateComment, commentController.createComment.bind(commentController));
-router.put('/comments/:id', validateComment, commentController.updateComment.bind(commentController));
-router.get('/comments', commentController.getAllComments.bind(commentController));
+router.use(userActivityLogger(userActivityLogService))
+
+router.post('/', validateComment, commentController.createComment.bind(commentController));
+router.put('/:id', validateComment, commentController.updateComment.bind(commentController));
+router.get('/', commentController.getAllComments.bind(commentController));
 
 router.use(validateIsAdmin);
-router.delete('/comments/:id', commentController.deleteComment.bind(commentController));
+router.delete('/:id', commentController.deleteComment.bind(commentController));
 
 
 export default router;

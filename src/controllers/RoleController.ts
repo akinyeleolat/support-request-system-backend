@@ -41,7 +41,7 @@ export class RoleController {
     try {
       const { name, description } = req.body;
 
-      const newRole: RoleDocument = await this.roleService.createRoleWithValidation(name, description);
+      const newRole = await this.roleService.createRoleWithValidation(name, description);
 
       return res.status(201).json(newRole);
     } catch (error) {

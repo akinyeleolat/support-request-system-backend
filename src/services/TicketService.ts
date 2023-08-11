@@ -1,14 +1,20 @@
 // src/services/TicketService.ts
 import fs from 'fs';
 import { join } from 'path';
+import { StatusCodes } from 'http-status-codes';
 import * as csv from 'fast-csv';
 import TicketModel, { TicketDocument } from '../models/Ticket';
+import UserModel from '../models/User';
+import { CustomError, generateError } from '../util/errorUtils';
+import { STATUS_CODES } from 'http';
 
 export class TicketService {
   private ticketModel: TicketModel;
+  private userModel: UserModel;
 
-  constructor(ticketModel: TicketModel) {
+  constructor(ticketModel: TicketModel, userModel: UserModel) {
     this.ticketModel = ticketModel;
+    this.userModel = userModel;
   }
 
   async create(data: Partial<TicketDocument>): Promise<TicketDocument> {
@@ -53,6 +59,44 @@ export class TicketService {
 
     return filePath;
   }
+
+  async assignTicketToSupportAgent(ticketId: string, supportAgentId: string) {
+
+    if (!supportAgentId) {
+      const errorResponse: CustomError = generateError(StatusCodes.BAD_REQUEST,'Support AgentId missing.')
+      return errorResponse;
+    }
+
+
+    const ticket = await this.ticketModel.findById(ticketId);
+    const supportAgent = await this.userModel.findById(supportAgentId)
+
+    if (!supportAgent) {
+      const errorResponse: CustomError = generateError(StatusCodes.NOT_FOUND,'Support Agent not found.');
+      return errorResponse;
+    }
+
+    if (!ticket) {
+      const errorResponse: CustomError = generateError(StatusCodes.NOT_FOUND,'Ticket not found.');
+      return errorResponse;
+    }
+
+    if (ticket.status === 'Open') {
+      ticket.status = 'In Progress';
+    }
+
+    ticket.supportAgent = supportAgentId;
+
+    return this.update(ticketId, ticket);
+  }
+
+  //TODO: 
+  // create close ticket method, you can use update
+  // error handling or error utils completion
+  // write more test
+  // implement refresh token
+  // reduce service code with abstract base class
+
 }
 
 

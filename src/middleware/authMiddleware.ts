@@ -69,7 +69,7 @@ export async function validateIsAdmin(req: Request, res: Response, next: NextFun
   }
 }
 
-export function validateRole(role: string) {
+export function validateRoleAndNotRole(role: string, notRole: boolean) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userRole = req.user?.role;
@@ -77,7 +77,15 @@ export function validateRole(role: string) {
         return res.status(401).json({ error: true, message: 'Unauthorized: User role not found.' });
       }
 
-      if (userRole.toString() !== role) {
+      const roleModel = new RoleModel();
+      const roleService = new RoleService(roleModel);
+      const roleData = await roleService.findByName(role);
+
+      if (notRole && userRole.toString() === roleData?._id.toString()) {
+        return res.status(403).json({ error: true, message: `Forbidden: ${role} users cannot perform this action.` });
+      }
+
+      if (!notRole && userRole.toString() !== roleData?._id.toString()) {
         return res.status(403).json({ error: true, message: `Forbidden: Only ${role} users can perform this action.` });
       }
 
@@ -87,3 +95,5 @@ export function validateRole(role: string) {
     }
   };
 }
+
+

@@ -40,8 +40,8 @@ export class CommentController {
    */
   async createComment(req: Request, res: Response) {
     try {
-      const { text, ticket, user } = req.body;
-      const newComment = await this.commentService.create({ text, ticket, user });
+      const { text, ticketId, user } = req.body;
+      const newComment = await this.commentService.createComment(ticketId, user, text);
       res.status(201).json(newComment);
     } catch (error) {
       res.status(500).json({ error: 'Failed to create comment.' });

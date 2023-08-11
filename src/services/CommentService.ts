@@ -1,6 +1,8 @@
 // src/services/CommentService.ts
+import { StatusCodes } from 'http-status-codes';
 import CommentModel, { CommentDocument } from '../models/Comment';
 import TicketModel, { TicketDocument } from '../models/Ticket';
+import { CustomError, generateError } from '../util/errorUtils';
 
 export class CommentService {
   private commentModel: CommentModel;
@@ -27,13 +29,14 @@ export class CommentService {
     return this.commentModel.findAll(filter);
   }
 
-  async createComment(ticketId: string, user: string, text: string): Promise<CommentDocument> {
+  async createComment(ticketId: string, user: string, text: string){
     // Find the ticket based on the given ticketId
     const ticket: TicketDocument | null = await this.ticketModel.findById(ticketId);
 
     // Check if the ticket exists and if a support agent has commented on the ticket
     if (!ticket || !ticket.supportAgent) {
-      throw new Error('Ticket not found or a support agent must comment on the ticket before a customer can comment.');
+      const errorResponse: CustomError = generateError(StatusCodes.BAD_REQUEST,'Ticket not found or a support agent must comment on the ticket before a customer can comment.' );
+      return errorResponse;
     }
 
     // Create the comment

@@ -3,28 +3,37 @@ import { Router } from 'express';
 import TicketModel from '../models/Ticket';
 import { TicketService } from '../services/TicketService';
 import { TicketController } from '../controllers/TicketController';
-import { authTokenValidator, validateIsAdmin } from '../middleware/authMiddleware';
+import { authTokenValidator, validateIsAdmin, validateRoleAndNotRole } from '../middleware/authMiddleware';
 import validateTicket from '../middleware/validateTicket';
 import CommentModel from '../models/Comment';
 import { CommentService } from '../services/CommentService';
+import { userActivityLogger, userActivityLogService } from '../middleware/userActivityLogger';
+import UserModel from '../models/User';
+
 
 const router = Router();
 const ticketModel = new TicketModel();
-const ticketService = new TicketService(ticketModel);
+const userModel = new UserModel()
+const ticketService = new TicketService(ticketModel, userModel);
 const commentModel = new CommentModel();
 const commentService = new CommentService(commentModel, ticketModel)
 const ticketController = new TicketController(ticketService, commentService);
 
 
 router.use(authTokenValidator)
-router.post('/tickets', validateTicket, ticketController.createTicket.bind(ticketController));
-router.put('/tickets/:id', validateTicket, ticketController.updateTicket.bind(ticketController));
-router.get('/tickets/:id', ticketController.getTicket.bind(ticketController));
-router.get('/tickets/comment/:id', ticketController.getCommentsForTicket.bind(ticketController));
-router.get('/tickets', ticketController.getTickets.bind(ticketController));
+
+router.use(userActivityLogger(userActivityLogService))
+
+router.post('/', validateTicket, ticketController.createTicket.bind(ticketController));
+router.put('/:id', validateTicket, ticketController.updateTicket.bind(ticketController));
+router.get('/:id', ticketController.getTicket.bind(ticketController));
+router.get('/:id/comment', ticketController.getCommentsForTicket.bind(ticketController));
+router.get('/', ticketController.getTickets.bind(ticketController));
+
+router.post('/:id/assign',validateRoleAndNotRole('customer',true), ticketController.assignTicket.bind(ticketController)), 
 
 router.use(validateIsAdmin);
-router.get('/tickets/closed', ticketController.generateClosedTicketsReport.bind(ticketController));
-router.delete('/tickets/:id', ticketController.deleteTicket.bind(ticketController));
+router.get('/closed', ticketController.generateClosedTicketsReport.bind(ticketController));
+router.delete('/:id', ticketController.deleteTicket.bind(ticketController));
 
 export default router;
