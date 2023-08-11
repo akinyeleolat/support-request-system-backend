@@ -60,7 +60,7 @@ export class TicketController {
   /**
    * @swagger
    * /api/tickets/{id}:
-   *   put:
+   *   patch:
    *     summary: Update a ticket
    *     description: Update an existing ticket with the provided title and description
    *     tags:
@@ -298,12 +298,12 @@ export class TicketController {
           return res.status(500).json({ message: 'Error downloading file.' });
         }
 
-        // Delete the report file after it's downloaded
-        fs.unlink(reportFilePath, (err: any) => {
-          if (err) {
-            console.error('Error deleting file:', err);
-          }
-        });
+        // // Delete the report file after it's downloaded
+        // fs.unlink(reportFilePath, (err: any) => {
+        //   if (err) {
+        //     console.error('Error deleting file:', err);
+        //   }
+        // });
       });
     } catch (error) {
       next(error);

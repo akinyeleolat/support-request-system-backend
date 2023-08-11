@@ -18,7 +18,7 @@ router.use(authTokenValidator)
 router.use(userActivityLogger(userActivityLogService))
 
 router.post('/', validateComment, commentController.createComment.bind(commentController));
-router.put('/:id', validateComment, commentController.updateComment.bind(commentController));
+router.patch('/:id', validateComment, commentController.updateComment.bind(commentController));
 router.get('/', commentController.getAllComments.bind(commentController));
 
 router.use(validateIsAdmin);

@@ -112,7 +112,7 @@ export class RoleController {
   /**
    * @swagger
    * /api/roles/{id}:
-   *   put:
+   *   patch:
    *     summary: Update a role
    *     description: Update an existing role with the provided name and description
    *     tags:

@@ -51,7 +51,7 @@ export class CommentController {
   /**
    * @swagger
    * /api/comments/{id}:
-   *   put:
+   *   patch:
    *     summary: Update a comment
    *     description: Update the text of an existing comment
    *     tags:

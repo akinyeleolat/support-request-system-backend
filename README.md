@@ -35,21 +35,21 @@ The following are the main endpoints provided by the backend API:
   - GET /api/tickets/:id: Get a specific ticket.
   - GET /api/tickets/comment/:id: Get comments for specific ticket.
   - GET /api/tickets/closed: Get tickets closed within date range.
-  - PUT /api/tickets/:id: Update a ticket.
+  - PATCH /api/tickets/:id: Update a ticket.
   - DELETE /api/tickets/:id: Delete a ticket.
 
 - **Comments:**
   - POST /api/comments: Add a new comment to a ticket.
   - GET /api/comments: Get all comments.
   - GET /api/comments/:id: Get a specific comment.
-  - PUT /api/comments/:id: Update a comment.
+  - PATCH /api/comments/:id: Update a comment.
   - DELETE /api/comments/:id: Delete a comment.
 
 - **Roles:**
   - POST /api/role: Create a new role.
   - GET /api/role: Get all roles.
   - GET /api/role/:id: Get a specific role.
-  - PUT /api/role/:id: Update a role.
+  - PATCH /api/role/:id: Update a role.
   - DELETE /api/role/:id: Delete a role.
 
 ## Technology Stack

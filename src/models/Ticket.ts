@@ -3,6 +3,8 @@ import { Schema, model, Document } from 'mongoose';
 import { BaseMongooseModel } from './BaseModel';
 
 export interface TicketDocument extends Document {
+  createdAt: any;
+  updatedAt: any;
   title: string;
   description: string;
   status: string;
@@ -32,8 +34,9 @@ const ticketSchema = new Schema({
   supportAgent: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-  },
-});
+  }
+},
+{ timestamps: true },);
 
 
 class TicketModel extends BaseMongooseModel<TicketDocument> {

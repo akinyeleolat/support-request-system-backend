@@ -51,27 +51,58 @@ export class TicketService {
   async generateClosedTicketsReport(startDate: Date, endDate: Date): Promise<string> {
     const closedTickets = await this.findClosedTicketsInRange(startDate, endDate);
 
+    const formattedClosedTickets = closedTickets.map(ticket => ({
+      title: ticket.title,
+      description: ticket.description,
+      status: ticket.status,
+      customer: ticket.customer,
+      supportAgent: ticket.supportAgent,
+      createdAt: ticket.createdAt,
+      updatedAt: ticket.updatedAt,
+    }));
+
+    // Create the 'reports' directory if it doesn't exist
+    const reportsDir = join(__dirname, '..', 'reports');
+    if (!fs.existsSync(reportsDir)) {
+      fs.mkdirSync(reportsDir);
+    }
+
     const fileName = `closed_tickets_report_${Date.now()}.csv`;
-    const filePath = join(__dirname, '..', 'reports', fileName);
+    const filePath = join(reportsDir, fileName);
 
     const ws = fs.createWriteStream(filePath);
-    csv.write(closedTickets, { headers: true }).pipe(ws);
-
-    return filePath;
+    const csvStream = csv.format({ headers: true });
+    csvStream.pipe(ws);
+    
+    for (const ticket of formattedClosedTickets) {
+      csvStream.write(ticket);
+    }
+    
+    csvStream.end();
+    
+    return new Promise<string>((resolve, reject) => {
+      ws.on('finish', () => {
+        resolve(filePath);
+      });
+    
+      ws.on('error', (error) => {
+        reject(error);
+      });
+    })
   }
 
-  async assignTicketToSupportAgent(ticketId: string, supportAgentId: string) {
+  async assignTicketToSupportAgent(ticketId: string, supportAgent: string) {
 
-    if (!supportAgentId) {
-      const errorResponse: CustomError = generateError(StatusCodes.BAD_REQUEST,'Support AgentId missing.')
+    if (!supportAgent) {
+      const errorResponse: CustomError = generateError(StatusCodes.BAD_REQUEST,'Support Agent missing.')
       return errorResponse;
     }
 
 
     const ticket = await this.ticketModel.findById(ticketId);
-    const supportAgent = await this.userModel.findById(supportAgentId)
+    const supportAgentData = await this.userModel.findById(supportAgent)
 
-    if (!supportAgent) {
+    if (!supportAgentData) {
       const errorResponse: CustomError = generateError(StatusCodes.NOT_FOUND,'Support Agent not found.');
       return errorResponse;
     }
@@ -85,7 +116,7 @@ export class TicketService {
       ticket.status = 'In Progress';
     }
 
-    ticket.supportAgent = supportAgentId;
+    ticket.supportAgent = supportAgent;
 
     return this.update(ticketId, ticket);
   }

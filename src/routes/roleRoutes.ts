@@ -21,7 +21,7 @@ router.use(userActivityLogger(userActivityLogService))
 
 router.use(validateIsAdmin);
 router.post('/', roleController.createRole.bind(roleController));
-router.put('/:id',  roleController.updateRole.bind(roleController));
+router.patch('/:id',  roleController.updateRole.bind(roleController));
 router.delete('/:id', roleController.deleteRole.bind(roleController));
 
 export default router;

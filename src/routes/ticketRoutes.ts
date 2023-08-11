@@ -25,7 +25,7 @@ router.use(authTokenValidator)
 router.use(userActivityLogger(userActivityLogService))
 
 router.post('/', validateTicket, ticketController.createTicket.bind(ticketController));
-router.put('/:id', validateTicket, ticketController.updateTicket.bind(ticketController));
+router.patch('/:id', ticketController.updateTicket.bind(ticketController));
 router.get('/:id', ticketController.getTicket.bind(ticketController));
 router.get('/:id/comment', ticketController.getCommentsForTicket.bind(ticketController));
 router.get('/', ticketController.getTickets.bind(ticketController));
@@ -33,7 +33,7 @@ router.get('/', ticketController.getTickets.bind(ticketController));
 router.post('/:id/assign',validateRoleAndNotRole('customer',true), ticketController.assignTicket.bind(ticketController)), 
 
 router.use(validateIsAdmin);
-router.get('/closed', ticketController.generateClosedTicketsReport.bind(ticketController));
+router.get('/reports/closed', ticketController.generateClosedTicketsReport.bind(ticketController));
 router.delete('/:id', ticketController.deleteTicket.bind(ticketController));
 
 export default router;

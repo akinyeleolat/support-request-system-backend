@@ -53,7 +53,7 @@ export async function validateIsAdmin(req: Request, res: Response, next: NextFun
     const roleModel = new RoleModel()
 
     const roleService = new RoleService(roleModel);
-    const adminRole = await roleService.findByName('Admin');
+    const adminRole = await roleService.findByName('admin');
 
     if (!adminRole) {
       return res.status(500).json({ error: true, message: 'Internal Server Error: Admin role not found.' });
